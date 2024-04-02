@@ -3,6 +3,7 @@ const express = require('express');
 const { Server } = require('ws');
 const bodyParser = require('body-parser');
 
+// Set the port
 const PORT = process.env.PORT || 3000;
 
 // Create an instance of Express
@@ -11,26 +12,24 @@ const app = express();
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());
 
+// Set up Express server
+const server = app.use((req, res) => res.send('Hello World!')).listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 // Create a WebSocket server
-const wss = new Server({ noServer: true });
+const wss = new Server({ server });
 
-// Route to handle WebSocket connections
+// WebSocket connection handling
 wss.on('connection', (ws) => {
-  console.log('WebSocket connected');
+  console.log('Client connected');
 
-  // Handle messages from WebSocket client
+  // Handle incoming messages
   ws.on('message', (message) => {
-    console.log('Received message from client:', message);
+    console.log(`Received: ${message}`);
   });
 
-  // Send a message to the WebSocket client
-  ws.send('Hello from server!');
-});
-
-// Attach WebSocket server to Express server
-app.on('upgrade', (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
+  // Handle client disconnection
+  ws.on('close', () => {
+    console.log('Client disconnected');
   });
 });
 
@@ -60,8 +59,7 @@ app.get('/check_statement', (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 
