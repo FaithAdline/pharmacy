@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/io.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -22,26 +24,40 @@ class HomeScreen extends StatelessWidget {
 
   void _sendMessage(BuildContext context) async {
     final String message = _textController.text;
-    final response = await http.post(
-      Uri.parse('http://your_node_server_url.com/send_message'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{'message': message}),
-    );
 
-    if (response.statusCode == 200) {
-      // Successful response, show a success message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Message sent successfully'),
-      ));
-    } else {
-      // Error occurred, show an error message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to send message'),
-      ));
-    }
+      // Send message via WebSocket to localhost
+    final channel = IOWebSocketChannel.connect('ws://localhost:3000');
+    channel.sink.add(message);
+
+    // Close the channel when done
+    channel.sink.close();
+
+    // Show a success message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Message sent successfully'),
+    ));
   }
+
+  //   final response = await http.post(
+  //     Uri.parse('http://your_node_server_url.com/send_message'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, String>{'message': message}),
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     // Successful response, show a success message
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('Message sent successfully'),
+  //     ));
+  //   } else {
+  //     // Error occurred, show an error message
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('Failed to send message'),
+  //     ));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
