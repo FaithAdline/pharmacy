@@ -1,4 +1,8 @@
+// main.dart
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +31,6 @@ class OrderMedicationScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Navigate to the order form screen
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OrderFormScreen()),
@@ -46,8 +49,8 @@ class OrderFormScreen extends StatefulWidget {
 }
 
 class _OrderFormScreenState extends State<OrderFormScreen> {
-  final TextEditingController _medicationController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
+  TextEditingController _medicationController = TextEditingController();
+  TextEditingController _quantityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +76,6 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // Handle order submission
                 _submitOrder();
               },
               child: Text('Submit Order'),
@@ -84,33 +86,57 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     );
   }
 
-  void _submitOrder() {
-    // Here you would implement logic to submit the order to the server
+  void _submitOrder() async {
     String medication = _medicationController.text;
     String quantity = _quantityController.text;
 
-    // Placeholder logic to print order details for demonstration purposes
-    print('Order placed - Medication: $medication, Quantity: $quantity');
+    // HTTP POST request to backend server
+    String url = 'http://your_backend_server_url.com/place_order';
+    Map<String, String> headers = {"Content-type": "application/json"};
+    String json = '{"medication": "$medication", "quantity": "$quantity"}';
 
-    // Show confirmation dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Order Confirmation'),
-          content: Text('Your order has been placed successfully.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Close the dialog and navigate back to the previous screen
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+    // Make the request
+    final response = await http.post(url, headers: headers, body: json);
+
+    if (response.statusCode == 200) {
+      // Order successful, show confirmation
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Order Confirmation'),
+            content: Text('Your order has been placed successfully.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Order failed, show error message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Order Failed'),
+            content: Text('Failed to place order. Please try again later.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
