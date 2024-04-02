@@ -63,6 +63,9 @@ class HomeScreen extends StatelessWidget {
                 _sendMessage(context);
               }
             },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue, // Change button color here
+            ),
             child: Text('Send Message'),
           ),
         ],
@@ -70,6 +73,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
 
 
 
