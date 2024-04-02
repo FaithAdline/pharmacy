@@ -12,11 +12,8 @@ const app = express();
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());
 
-// Set up Express server
-const server = app.use((req, res) => res.send('Hello World!')).listen(PORT, () => console.log(`Listening on ${PORT}`));
-
 // Create a WebSocket server
-const wss = new Server({ server });
+const wss = new Server({ noServer: true });
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
@@ -58,8 +55,14 @@ app.get('/check_statement', (req, res) => {
   res.status(200).json({ statement: 'Statement data goes here' });
 });
 
-// Start the server
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Attach WebSocket server to Express server
+app.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
 });
 
+// Start the server
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
