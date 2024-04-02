@@ -91,7 +91,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     String quantity = _quantityController.text;
 
     // HTTP POST request to backend server
-    String url = 'http://your_backend_server_url.com/place_order';
+    String url = 'http://localhost:3000/place_order';
     Map<String, String> headers = {"Content-type": "application/json"};
     String json = '{"medication": "$medication", "quantity": "$quantity"}';
 
