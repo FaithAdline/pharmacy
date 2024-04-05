@@ -51,24 +51,34 @@ class HomeScreen extends StatelessWidget {
               hintText: 'Enter your message here',
             ),
           ),
-       ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => OrderFormScreen()),
-    );
-  },
-  style: ElevatedButton.styleFrom(
-    primary: Colors.blue, // Change button color here
-  ),
-  child: Text('Place Order'),
-),
-
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OrderFormScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue, // Change button color here
+            ),
+            child: Text('Place Order'),
+          ),
         ],
       ),
     );
   }
 }
 
-
-
+class OrderFormScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Order Form'),
+      ),
+      body: Center(
+        child: Text('Order Form Screen'),
+      ),
+    );
+  }
+}
