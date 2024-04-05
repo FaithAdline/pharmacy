@@ -86,57 +86,58 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     );
   }
 
-  void _submitOrder() async {
-    String medication = _medicationController.text;
-    String quantity = _quantityController.text;
+void _submitOrder() async {
+  String medication = _medicationController.text;
+  String quantity = _quantityController.text;
 
-    // HTTP POST request to backend server
-    String url = 'http://localhost:3000/place_order';
-    Map<String, String> headers = {"Content-type": "application/json"};
-    String json = '{"medication": "$medication", "quantity": "$quantity"}';
+  // HTTP POST request to backend server
+  String url = 'http://localhost:3000/place_order';
+  Map<String, String> headers = {"Content-type": "application/json"};
+  String json = '{"medication": "$medication", "quantity": "$quantity"}';
 
-    // Make the request
-    final response = await http.post(url, headers: headers, body: json);
+  // Make the request
+  final response = await http.post(url, headers: headers, body: json);
 
-    if (response.statusCode == 200) {
-      // Order successful, show confirmation
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Order Confirmation'),
-            content: Text('Your order has been placed successfully.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // Order failed, show error message
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Order Failed'),
-            content: Text('Failed to place order. Please try again later.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
+  if (response.statusCode == 200) {
+    // Order successful, show confirmation
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Order Confirmation'),
+          content: Text('Your order has been placed successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    // Order failed, show error message and log response
+    print("Failed to place order. Status code: ${response.statusCode}");
+    print("Error response: ${response.body}");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Order Failed'),
+          content: Text('Failed to place order. Please try again later.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
