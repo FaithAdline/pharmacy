@@ -51,17 +51,19 @@ class HomeScreen extends StatelessWidget {
               hintText: 'Enter your message here',
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (_textController.text.isNotEmpty) {
-                _sendMessage(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blue, // Change button color here
-            ),
-            child: Text('Send Message'),
-          ),
+       ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => OrderFormScreen()),
+    );
+  },
+  style: ElevatedButton.styleFrom(
+    primary: Colors.blue, // Change button color here
+  ),
+  child: Text('Place Order'),
+),
+
         ],
       ),
     );
